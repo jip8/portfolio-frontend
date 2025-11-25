@@ -32,7 +32,7 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://api.jipdev.cloud' }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'http://api.jipdev.cloud' }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -79,4 +79,6 @@ jobs:
       - name: Verify deployment
         run: |
           sleep 3
-          curl -f https://jipdev.cloud || echo "Warning: Site check failed"
+          ssh -p ${{ secrets.SSH_PORT || 22 }} \
+            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+            'curl -f http://localhost/ -H "Host: jipdev.cloud" || echo "Warning: Site check failed"'

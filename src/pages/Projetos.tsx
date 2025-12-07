@@ -21,6 +21,29 @@ const getProjectThumbnail = (project: ProjectResp): string | null => {
   return null;
 };
 
+const stripMarkdown = (markdown: string): string => {
+  return markdown
+    .replace(/#{1,6}\s/g, '') // Remove headers
+    .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
+    .replace(/\*(.+?)\*/g, '$1') // Remove italic
+    .replace(/__(.+?)__/g, '$1') // Remove bold (underscore)
+    .replace(/_(.+?)_/g, '$1') // Remove italic (underscore)
+    .replace(/\[(.+?)\]\(.+?\)/g, '$1') // Remove links
+    .replace(/`(.+?)`/g, '$1') // Remove inline code
+    .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+    .replace(/>\s/g, '') // Remove blockquotes
+    .replace(/[-*+]\s/g, '') // Remove list markers
+    .replace(/\n/g, ' ') // Replace newlines with spaces
+    .replace(/\s+/g, ' ') // Normalize spaces
+    .trim();
+};
+
+const truncateText = (text: string, maxLength: number): string => {
+  const stripped = stripMarkdown(text || '');
+  if (stripped.length <= maxLength) return stripped;
+  return stripped.substring(0, maxLength).trim() + '...';
+};
+
 export default function Projetos() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<ProjectResp[]>([]);
@@ -99,10 +122,14 @@ export default function Projetos() {
 
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2 text-foreground">{project.title}</h3>
-                  <p className="text-muted-foreground mb-4">{project.description}</p>
-                  
+                  {project.description && (
+                    <p className="text-muted-foreground mb-4 line-clamp-3">
+                      {truncateText(project.description, 150)}
+                    </p>
+                  )}
+
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {project.skills?.map((skill) => (
+                    {project.skills?.slice(0, 4).map((skill) => (
                       <span
                         key={skill.id}
                         className="px-3 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded-full"
@@ -110,8 +137,16 @@ export default function Projetos() {
                         {skill.title}
                       </span>
                     ))}
+                    {project.skills && project.skills.length > 4 && (
+                      <span className="px-3 py-1 text-xs font-medium text-muted-foreground">
+                        +{project.skills.length - 4}
+                      </span>
+                    )}
                   </div>
 
+                  <div className="text-sm text-primary font-medium group-hover:underline">
+                    Ver mais →
+                  </div>
                 </div>
               </Card>
             ))

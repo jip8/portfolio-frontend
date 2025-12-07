@@ -3,6 +3,7 @@ import { About } from "@/api/generated";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import { TypewriterEffect } from "./TypewriterEffect";
+import Markdown from "react-markdown";
 
 export function AboutSection() {
   const [about, setAbout] = useState<About | null>(null);
@@ -59,9 +60,9 @@ export function AboutSection() {
                 className="bg-gradient-primary bg-clip-text text-transparent"
               />
             </h2>
-            <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-3xl">
-              {about.content}
-            </p>
+            <div className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed max-w-3xl prose prose-sm sm:prose-base md:prose-lg dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-muted prose-ul:list-disc prose-ol:list-decimal prose-li:ml-4">
+              <Markdown>{about.content}</Markdown>
+            </div>
 
             <div className="xl:hidden flex justify-center pt-6 pb-4 animate-scale-in">
               <img

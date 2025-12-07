@@ -32,6 +32,29 @@ const formatDate = (dateString?: string) => {
   });
 };
 
+const stripMarkdown = (markdown: string): string => {
+  return markdown
+    .replace(/#{1,6}\s/g, '') // Remove headers
+    .replace(/\*\*(.+?)\*\*/g, '$1') // Remove bold
+    .replace(/\*(.+?)\*/g, '$1') // Remove italic
+    .replace(/__(.+?)__/g, '$1') // Remove bold (underscore)
+    .replace(/_(.+?)_/g, '$1') // Remove italic (underscore)
+    .replace(/\[(.+?)\]\(.+?\)/g, '$1') // Remove links
+    .replace(/`(.+?)`/g, '$1') // Remove inline code
+    .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+    .replace(/>\s/g, '') // Remove blockquotes
+    .replace(/[-*+]\s/g, '') // Remove list markers
+    .replace(/\n/g, ' ') // Replace newlines with spaces
+    .replace(/\s+/g, ' ') // Normalize spaces
+    .trim();
+};
+
+const truncateText = (text: string, maxLength: number): string => {
+  const stripped = stripMarkdown(text || '');
+  if (stripped.length <= maxLength) return stripped;
+  return stripped.substring(0, maxLength).trim() + '...';
+};
+
 export default function Artigos() {
   const navigate = useNavigate();
   const [articles, setArticles] = useState<ArticleResp[]>([]);
@@ -125,13 +148,17 @@ export default function Artigos() {
                       )}
                     </div>
 
-                    <h2 className="text-2xl font-bold mb-3 text-foreground hover:text-primary transition-colors">
+                    <h2 className="text-2xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors">
                       {article.title}
                     </h2>
-                    <p className="text-muted-foreground mb-4 flex-grow">{article.description}</p>
+                    {article.description && (
+                      <p className="text-muted-foreground mb-4 flex-grow line-clamp-3">
+                        {truncateText(article.description, 200)}
+                      </p>
+                    )}
 
-                    <div className="flex flex-wrap gap-2">
-                      {article.skills?.map((skill) => (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {article.skills?.slice(0, 5).map((skill) => (
                         <span
                           key={skill.id}
                           className="px-3 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded-full"
@@ -139,6 +166,15 @@ export default function Artigos() {
                           {skill.title}
                         </span>
                       ))}
+                      {article.skills && article.skills.length > 5 && (
+                        <span className="px-3 py-1 text-xs font-medium text-muted-foreground">
+                          +{article.skills.length - 5}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="text-sm text-primary font-medium group-hover:underline">
+                      Ver mais →
                     </div>
                   </div>
                 </div>

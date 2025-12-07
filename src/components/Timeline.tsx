@@ -3,6 +3,7 @@ import { ExperienceResp } from "@/api/generated";
 import { Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
+import Markdown from "react-markdown";
 
 const formatPeriod = (startDate?: string, endDate?: string, isActual?: boolean) => {
   const format = (dateStr: string) => {
@@ -86,7 +87,9 @@ export function Timeline() {
                     </div>
                     <h3 className="text-xl font-bold text-foreground mb-1">{exp.function}</h3>
                     <p className="text-muted-foreground font-medium mb-3">{exp.title}</p>
-                    <p className="text-muted-foreground">{exp.description}</p>
+                    <div className="text-muted-foreground prose prose-sm dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-muted prose-ul:list-disc prose-ol:list-decimal prose-li:ml-4 max-w-none">
+                      <Markdown>{exp.description}</Markdown>
+                    </div>
                   </div>
                 </div>
                 <div className="absolute left-8 md:left-1/2 top-6 w-4 h-4 bg-primary rounded-full border-4 border-background -translate-x-1/2 z-10" />

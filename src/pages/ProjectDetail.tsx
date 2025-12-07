@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { SkillBadge } from "@/components/SkillBadge";
 import { ImageGallery } from "@/components/ImageGallery";
+import Markdown from "react-markdown";
 
 const getAttachmentUrl = (link: string): string => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -110,9 +111,9 @@ export default function ProjectDetail() {
           )}
 
           {project.description && (
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {project.description}
-            </p>
+            <div className="text-lg text-muted-foreground leading-relaxed prose prose-lg dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-muted prose-ul:list-disc prose-ol:list-decimal prose-li:ml-4 max-w-none">
+              <Markdown>{project.description}</Markdown>
+            </div>
           )}
         </div>
 

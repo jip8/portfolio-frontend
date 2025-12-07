@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Briefcase, Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
+import Markdown from "react-markdown";
 
 const formatPeriod = (startDate?: string, endDate?: string, isActual?: boolean) => {
   const format = (dateStr: string) => {
@@ -100,7 +101,9 @@ export default function Experiencia() {
                   </div>
                 </div>
 
-                <p className="text-muted-foreground mb-6">{exp.description}</p>
+                <div className="text-muted-foreground mb-6 prose prose-base dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-muted prose-ul:list-disc prose-ol:list-decimal prose-li:ml-4 max-w-none">
+                  <Markdown>{exp.description}</Markdown>
+                </div>
 
                 {exp.skills && exp.skills.length > 0 &&
                   <div>

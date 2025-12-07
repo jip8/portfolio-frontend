@@ -7,6 +7,8 @@ import { LinksManager } from "./LinksManager";
 import { SkillsSelector } from "./SkillsSelector";
 import { AttachmentsManager } from "./AttachmentsManager";
 import { Separator } from "@/components/ui/separator";
+import Markdown from "react-markdown";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const toInputDate = (dateStr?: string): string => {
   if (!dateStr) return "";
@@ -67,13 +69,31 @@ export function ProjectForm({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">Descrição</Label>
-          <Textarea
-            id="description"
-            value={formData.description || ""}
-            onChange={(e) => handleChange("description", e.target.value)}
-            rows={4}
-          />
+          <Label htmlFor="description">Descrição (Markdown)</Label>
+          <Tabs defaultValue="edit" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="edit">Editar</TabsTrigger>
+              <TabsTrigger value="preview">Pré-visualizar</TabsTrigger>
+            </TabsList>
+            <TabsContent value="edit">
+              <Textarea
+                id="description"
+                value={formData.description || ""}
+                onChange={(e) => handleChange("description", e.target.value)}
+                rows={4}
+                placeholder="Escreva a descrição em Markdown..."
+              />
+            </TabsContent>
+            <TabsContent value="preview">
+              <div className="min-h-[96px] p-4 bg-background rounded-md prose prose-sm dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground prose-a:text-primary prose-code:text-foreground prose-pre:bg-muted prose-ul:list-disc prose-ol:list-decimal prose-li:ml-4 max-w-none">
+                {formData.description ? (
+                  <Markdown>{formData.description}</Markdown>
+                ) : (
+                  <p className="text-muted-foreground italic">Nada para pré-visualizar...</p>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
         <div className="space-y-2">

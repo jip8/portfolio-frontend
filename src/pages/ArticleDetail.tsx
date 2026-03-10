@@ -2,19 +2,15 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { articlesApi } from "@/api";
 import { ArticleResp } from "@/api/generated";
-import { ArrowLeft, ExternalLink, Calendar, MapPin, Download, FileText, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, ExternalLink, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { SkillBadge } from "@/components/SkillBadge";
 import { ImageGallery } from "@/components/ImageGallery";
+import { AttachmentList } from "@/components/AttachmentList";
 import Markdown from "react-markdown";
-
-const getAttachmentUrl = (link: string): string => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  return `${baseUrl}/attachments/${link}`;
-};
 
 export default function ArticleDetail() {
   const { id } = useParams<{ id: string }>();
@@ -170,41 +166,12 @@ export default function ArticleDetail() {
           </div>
         )}
 
-        {article.attachments && article.attachments.some(att => !validImageIds.has(att.id)) && (
-          <Card className="p-6 mb-6 animate-scale-in" style={{ animationDelay: '0.3s' }}>
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <FileText className="w-5 h-5 mr-2" />
-              Anexos
-            </h2>
-            <div className="grid gap-3">
-              {article.attachments
-                .filter(att => !validImageIds.has(att.id))
-                .map((attachment) => (
-                  <a
-                    key={attachment.id}
-                    href={getAttachmentUrl(attachment.link)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start p-4 rounded-lg border border-border hover:border-primary transition-colors group"
-                  >
-                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-secondary mr-4 flex-shrink-0">
-                      <FileText className="w-6 h-6 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
-                        {attachment.title}
-                      </p>
-                      {attachment.description && (
-                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                          {attachment.description}
-                        </p>
-                      )}
-                    </div>
-                    <Download className="w-4 h-4 ml-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                  </a>
-                ))}
-            </div>
-          </Card>
+        {article.attachments && (
+          <AttachmentList
+            attachments={article.attachments}
+            validImageIds={validImageIds}
+            animationDelay="0.3s"
+          />
         )}
 
         <Separator className="my-8" />
